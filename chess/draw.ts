@@ -117,7 +117,3 @@ function drawBoard(pieces:Pieces){
 }
 
 drawBoard(new Pieces())
-
-
-console.log(Deno.consoleSize(Deno.stdout.rid))
-console.log(minimumConsoleSizeBoard)
