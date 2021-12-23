@@ -1,6 +1,4 @@
-import * as Colors from "https://deno.land/std@0.118.0/fmt/colors.ts"
-
-export class PrimeSieve {
+class PrimeSieve {
     #root:number;
     #sieveSize: number;
     #buff: Uint8Array;
@@ -70,8 +68,28 @@ export class PrimeSieve {
         if(this.#knownNumberOfValues[this.#sieveSize]){
             return this.countResults() === this.#knownNumberOfValues[this.#sieveSize]
         }
-        // const key = Number(Object.keys(this.#knownNumberOfValues).reverse().filter(el=>Number(el) < this.#sieveSize)[0]);
-        // console.warn(Colors.brightYellow(Colors.italic(Colors.bold(`\nBe aware that validating this result may not be 100% accurate, as you provided a sieve size (${Colors.green(String(this.#sieveSize))}) that is !== a known value.\nThis result strictly checks that the number of primes counted (${Colors.green(String(this.countResults()))}) are greater than the next lowest known value ({ ${Colors.green(String(key))}: ${Colors.green(String(this.#knownNumberOfValues[key]))} })\n\nIf you want to be sure that this algoritm is accurate, run it with one of the following keys: \n${JSON.stringify(this.#knownNumberOfValues,null,2)}\n\n`))));
-        // return this.countResults() >= this.#knownNumberOfValues[key];
     }
 }
+
+
+
+    const maxTime = 5000;
+    let passes = 0;
+    const startTime = performance.now();
+    let currTime = startTime;
+    let duration = 0;
+
+    while(duration < maxTime){
+        const sieve = new PrimeSieve(1e6);
+        sieve.runSieve()
+        currTime = performance.now();
+        duration = currTime - startTime;
+        if(sieve.validateResults()){
+            passes+=1;
+        } else {
+            throw new Error("tests did not pass")
+        } 
+        
+    }
+
+    console.log(`passes: ${passes}; duration: ${duration / 1000}s; average time per pass: ${(duration/1000)/passes}s`);

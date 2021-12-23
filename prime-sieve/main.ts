@@ -11,13 +11,14 @@ function main(sieveSize:number){
     while(duration < maxTime){
         const sieve = new PrimeSieve(sieveSize);
         sieve.runSieve()
+        currTime = performance.now();
+        duration = currTime - startTime;
         if(sieve.validateResults()){
             passes+=1;
         } else {
             throw new Error("tests did not pass")
         } 
-        currTime = performance.now();
-        duration = currTime - startTime;
+        
     }
 
     return `passes: ${passes}; duration: ${duration / 1000}s; average time per pass: ${(duration/1000)/passes}s`;
