@@ -1,4 +1,4 @@
-import * as Colors from "https://deno.land/std@0.118.0/fmt/colors.ts"
+
 
 export class PrimeSieve {
     #root:number;
