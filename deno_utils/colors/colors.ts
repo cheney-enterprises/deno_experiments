@@ -1,7 +1,5 @@
 import * as C from "https://deno.land/std@0.118.0/fmt/colors.ts"
 
-// export const colors = Object.create(C);
-
 interface Rgb {
     r: number,
     g: number,
