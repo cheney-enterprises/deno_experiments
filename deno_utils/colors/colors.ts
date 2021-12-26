@@ -1,4 +1,13 @@
 import * as C from "https://deno.land/std@0.118.0/fmt/colors.ts"
+
+// export const colors = Object.create(C);
+
+interface Rgb {
+    r: number,
+    g: number,
+    b: number
+}
+
 declare global {
     interface String {
         bgBlack: string,
@@ -15,13 +24,13 @@ declare global {
         bgGreen: string,
         bgMagenta: string,
         bgRed: string,
-        bgRgb24: string,
-        bgRgb8: string,
+        bgRgb24: (color: number | Rgb) => string,
+        bgRgb8: (color: number) => string,
         bgWhite: string,
         bgYellow: string,
         black: string,
         blue: string,
-        Bold: string, // note that String.prototypw already has a bold function, so this uses Bold
+        Bold: string, // note that String.prototype already has a bold function, so this uses Bold
         brightBlack: string,
         brightBlue: string,
         brightCyan: string,
@@ -41,9 +50,9 @@ declare global {
         magenta: string,
         red: string,
         reset: string,
-        rgb24: string,
-        rgb8: string,
-        setColorEnabled: string,
+        rgb24: (color: number | Rgb) => string,
+        rgb8: (color: number)=> string,
+        setColorEnabled: (value: boolean) => void,
         strikethrough: string,
         stripColor: string,
         underline: string,
@@ -53,6 +62,7 @@ declare global {
 }
 
 export default (function(){
+//deno-lint-ignore ban-types
 function addProperty(color: keyof typeof C,fn: Function){
     let col = ''
     if(color === 'bold'){
@@ -60,18 +70,28 @@ function addProperty(color: keyof typeof C,fn: Function){
     } else {
         col = color
     }
-    Object.defineProperty(String.prototype,col,{
-        get():string{
-            const self = fn(this);
-            return self as string;
-        }
-    });
+    if(col.toLowerCase().includes('rgb')){
+        Object.defineProperty(String.prototype,col,{
+            value: function(color: number | Rgb){
+                return fn(this,color)
+            }
+        });
+    }else if(color === 'setColorEnabled'){
+        Object.defineProperty(String.prototype,col,{
+            value: fn
+        });
+    } else {
+        Object.defineProperty(String.prototype,col,{
+            get():string{
+                const self = fn(this);
+                return self as string;
+            }
+        });
+    }
+        
 }
-
-const obj: Record<string,Function> = {}
 
 Object.keys(C).forEach(function(el){
     const a = el as keyof typeof C;
     addProperty(a,C[a]);
-    obj[a] = C[a];
 })})();
