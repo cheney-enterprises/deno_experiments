@@ -1,3 +1,4 @@
+import "https://raw.githubusercontent.com/cheney-enterprises/deno_experiments/main/deno_utils/colors/colors.ts";
 
 
 export class PrimeSieve {
@@ -5,6 +6,7 @@ export class PrimeSieve {
     #sieveSize: number;
     #buff: Uint8Array;
     #results: number[] = [];
+    #sieveRun: boolean = false;
 
     #knownNumberOfValues: {[size:number]:number }= {
         10: 4,
@@ -47,6 +49,7 @@ export class PrimeSieve {
 
             factor += 2
         }
+        this.#sieveRun = true;
     }
 
     get results(){
@@ -67,11 +70,21 @@ export class PrimeSieve {
     }
 
     validateResults(){
+        if(!this.#sieveRun){
+            this.runSieve();
+        }
         if(this.#knownNumberOfValues[this.#sieveSize]){
             return this.countResults() === this.#knownNumberOfValues[this.#sieveSize]
         }
-        // const key = Number(Object.keys(this.#knownNumberOfValues).reverse().filter(el=>Number(el) < this.#sieveSize)[0]);
-        // console.warn(Colors.brightYellow(Colors.italic(Colors.bold(`\nBe aware that validating this result may not be 100% accurate, as you provided a sieve size (${Colors.green(String(this.#sieveSize))}) that is !== a known value.\nThis result strictly checks that the number of primes counted (${Colors.green(String(this.countResults()))}) are greater than the next lowest known value ({ ${Colors.green(String(key))}: ${Colors.green(String(this.#knownNumberOfValues[key]))} })\n\nIf you want to be sure that this algoritm is accurate, run it with one of the following keys: \n${JSON.stringify(this.#knownNumberOfValues,null,2)}\n\n`))));
-        // return this.countResults() >= this.#knownNumberOfValues[key];
+        const key = Number(Object.keys(this.#knownNumberOfValues).reverse().filter(el=>Number(el) < this.#sieveSize)[0]);
+        
+        const string = 
+            `Be aware that validating this result may not be 100% accurate, as you provided a sieve size (${String(this.#sieveSize).green}) that is !== a known value.\nThis result strictly checks that the number of primes counted (${String(this.countResults()).green}) are greater than the next lowest known value (${('{'+key+':'+this.#knownNumberOfValues[key]+'}').green}).\n\nIf you want to be sure that this algoritm is accurate, run it with one of the following keys as a number value in runSieve: \n${JSON.stringify(this.#knownNumberOfValues,null,2).green}
+            
+            `;
+        
+        console.warn(string.brightYellow.Bold.italic);
+
+        return this.countResults() >= this.#knownNumberOfValues[key];
     }
 }

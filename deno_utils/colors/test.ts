@@ -1,5 +1,4 @@
-
-import './colors.ts'
+import "https://raw.githubusercontent.com/cheney-enterprises/deno_experiments/main/deno_utils/colors/colors.ts";
 
 let str = 'rgb'
 str.setColorEnabled(false)
